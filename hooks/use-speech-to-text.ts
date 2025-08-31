@@ -62,8 +62,12 @@ export function useSpeechToText(): UseSpeechToTextReturn {
     };
 
     rec.onerror = (event: any) => {
-      console.error('Speech recognition error:', event.error);
-      setIsListening(false);
+      if (event.error === 'aborted') {
+        console.warn('Speech recognition aborted by user');
+      } else {
+        console.error('Speech recognition error:', event.error);
+        setIsListening(false);
+      }
     };
 
     rec.onend = () => {
