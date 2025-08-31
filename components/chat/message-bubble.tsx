@@ -42,17 +42,19 @@ export function MessageBubble({ message, isUser, timestamp, isLoading = false }:
             : 'bg-gray-100 text-gray-900 border-gray-200'
         )}>
           <CardContent className="p-3">
-            <p className="text-sm whitespace-pre-wrap break-words">
-              {isLoading ? (
+            {isLoading ? (
+              <div className="text-sm whitespace-pre-wrap break-words">
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 bg-current rounded-full animate-bounce" />
                   <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
                   <div className="w-2 h-2 bg-current rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
                 </div>
-              ) : (
-                message
-              )}
-            </p>
+              </div>
+            ) : (
+              <p className="text-sm whitespace-pre-wrap break-words">
+                {message}
+              </p>
+            )}
             {timestamp && (
               <p className={cn(
                 'text-xs mt-1',
