@@ -1,0 +1,117 @@
+// Devcanva — chat UI step (week 1-2) — client UI only
+// Main chat page with message display and input handling
+
+'use client';
+
+import { useState, useEffect, useRef } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { MessageBubble } from '@/components/chat/message-bubble';
+import { ChatInput } from '@/components/chat/chat-input';
+
+interface Message {
+  id: string;
+  content: string;
+  isUser: boolean;
+  timestamp: string;
+}
+
+export default function ChatPage() {
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+
+  // Initialize with welcome message
+  useEffect(() => {
+    const welcomeMessage: Message = {
+      id: 'welcome',
+      content: 'Hello! I\'m your AI assistant. How can I help you today?',
+      isUser: false,
+      timestamp: new Date().toLocaleTimeString(),
+    };
+    setMessages([welcomeMessage]);
+  }, []);
+
+  // Auto-scroll to bottom when new messages are added
+  useEffect(() => {
+    if (scrollAreaRef.current) {
+      scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
+    }
+  }, [messages]);
+
+  const handleSendMessage = async (content: string) => {
+    // Add user message
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      content,
+      isUser: true,
+      timestamp: new Date().toLocaleTimeString(),
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setIsLoading(true);
+
+    // TODO: Replace with actual OpenAI API call
+    // const response = await fetch('/api/chat', {
+    //   method: 'POST',
+    //   headers: { 'Content-Type': 'application/json' },
+    //   body: JSON.stringify({ message: content })
+    // });
+    // const data = await response.json();
+
+    // Simulate AI response with timeout
+    setTimeout(() => {
+      const assistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        content: 'This is a placeholder response. In the real implementation, this would be the AI assistant\'s reply based on your message.',
+        isUser: false,
+        timestamp: new Date().toLocaleTimeString(),
+      };
+
+      setMessages(prev => [...prev, assistantMessage]);
+      setIsLoading(false);
+    }, 1500);
+  };
+
+  return (
+    <div className="flex flex-col h-screen bg-gray-50">
+      <Card className="flex-1 m-4 flex flex-col">
+        <CardHeader className="border-b bg-white">
+          <CardTitle className="text-lg font-semibold">Chat Assistant</CardTitle>
+        </CardHeader>
+        
+        <CardContent className="flex-1 p-0 flex flex-col">
+          <ScrollArea 
+            ref={scrollAreaRef}
+            className="flex-1 p-4"
+          >
+            <div className="space-y-4">
+              {messages.map((message) => (
+                <MessageBubble
+                  key={message.id}
+                  message={message.content}
+                  isUser={message.isUser}
+                  timestamp={message.timestamp}
+                />
+              ))}
+              
+              {isLoading && (
+                <MessageBubble
+                  message=""
+                  isUser={false}
+                  isLoading={true}
+                />
+              )}
+            </div>
+          </ScrollArea>
+          
+          <ChatInput
+            onSendMessage={handleSendMessage}
+            disabled={isLoading}
+            placeholder="Type your message or use voice input..."
+          />
+        </CardContent>
+      </Card>
+    </div>
+  );
+} 
