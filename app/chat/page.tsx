@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { MessageBubble } from '@/components/chat/message-bubble';
 import { ChatInput } from '@/components/chat/chat-input';
+import { SkeletonMessage } from '@/components/SkeletonMessage';
 
 interface Message {
   id: string;
@@ -51,26 +52,34 @@ export default function ChatPage() {
     setMessages(prev => [...prev, userMessage]);
     setIsLoading(true);
 
-    // TODO: Replace with actual OpenAI API call
-    // const response = await fetch('/api/chat', {
-    //   method: 'POST',
-    //   headers: { 'Content-Type': 'application/json' },
-    //   body: JSON.stringify({ message: content })
-    // });
-    // const data = await response.json();
+    try {
+      const response = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: content })
+      });
+      const data = await response.json();
 
-    // Simulate AI response with timeout
-    setTimeout(() => {
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
-        content: 'This is a placeholder response. In the real implementation, this would be the AI assistant\'s reply based on your message.',
+        content: data.text,
         isUser: false,
         timestamp: new Date().toLocaleTimeString(),
       };
 
       setMessages(prev => [...prev, assistantMessage]);
+    } catch (error) {
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        content: 'Sorry, I encountered an error. Please try again.',
+        isUser: false,
+        timestamp: new Date().toLocaleTimeString(),
+      };
+
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
       setIsLoading(false);
-    }, 1500);
+    }
   };
 
   return (
@@ -83,7 +92,7 @@ export default function ChatPage() {
         <CardContent className="flex-1 p-0 flex flex-col">
           <ScrollArea 
             ref={scrollAreaRef}
-            className="flex-1 p-4"
+            className="flex-1 p-4 overflow-y-auto"
           >
             <div className="space-y-4">
               {messages.map((message) => (
@@ -95,22 +104,18 @@ export default function ChatPage() {
                 />
               ))}
               
-              {isLoading && (
-                <MessageBubble
-                  message=""
-                  isUser={false}
-                  isLoading={true}
-                />
-              )}
+              {isLoading && <SkeletonMessage />}
             </div>
           </ScrollArea>
-          
+        </CardContent>
+        
+        <div className="sticky bottom-0 bg-background">
           <ChatInput
             onSendMessage={handleSendMessage}
             disabled={isLoading}
             placeholder="Type your message or use voice input..."
           />
-        </CardContent>
+        </div>
       </Card>
     </div>
   );

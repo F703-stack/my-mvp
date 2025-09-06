@@ -26,6 +26,9 @@ export function MessageBubble({ message, isUser, timestamp, isLoading = false }:
           <AvatarImage 
             src={isUser ? undefined : '/bot-avatar.png'} 
             alt={isUser ? 'User' : 'Assistant'}
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = '/default-avatar.png'
+            }}
           />
           <AvatarFallback className={cn(
             'text-xs',
