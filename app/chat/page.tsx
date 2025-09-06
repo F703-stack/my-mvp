@@ -21,6 +21,7 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
 
   // Initialize with welcome message
   useEffect(() => {
@@ -33,12 +34,10 @@ export default function ChatPage() {
     setMessages([welcomeMessage]);
   }, []);
 
-  // Auto-scroll to bottom when new messages are added
+  // Auto-scroll to bottom when new messages are added or loading state changes
   useEffect(() => {
-    if (scrollAreaRef.current) {
-      scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
-    }
-  }, [messages]);
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, isLoading]);
 
   const handleSendMessage = async (content: string) => {
     // Add user message
@@ -105,6 +104,7 @@ export default function ChatPage() {
               ))}
               
               {isLoading && <SkeletonMessage />}
+              <div ref={bottomRef} />
             </div>
           </ScrollArea>
         </CardContent>
