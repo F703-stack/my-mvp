@@ -102,9 +102,18 @@ export default function ChatPage() {
       <Card className="flex-1 m-4 flex flex-col">
         <CardHeader className="border-b bg-white flex flex-row items-center justify-between">
           <CardTitle className="text-lg font-semibold">Chat Assistant</CardTitle>
-          <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => i18n.changeLanguage('en')}>EN</Button>
-            <Button variant="outline" size="sm" onClick={() => i18n.changeLanguage('es')}>ES</Button>
+          <div className="flex items-center gap-2">
+            <label className="text-sm text-gray-500" htmlFor="lang-select">Lang</label>
+            <select
+              id="lang-select"
+              className="h-8 px-2 rounded-md border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-gray-300"
+              value={i18n.language?.slice(0,2).toLowerCase()}
+              onChange={(e) => i18n.changeLanguage(e.target.value)}
+            >
+              {['en','es','fr','de','ar','zh','hi','ru','pt','ja'].map(code => (
+                <option key={code} value={code}>{code.toUpperCase()}</option>
+              ))}
+            </select>
           </div>
         </CardHeader>
         
