@@ -5,10 +5,12 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { MessageBubble } from '@/components/chat/message-bubble';
 import { ChatInput } from '@/components/chat/chat-input';
 import { SkeletonMessage } from '@/components/SkeletonMessage';
+import { useTranslation } from 'react-i18next';
 
 interface Message {
   id: string;
@@ -18,6 +20,7 @@ interface Message {
 }
 
 export default function ChatPage() {
+  const { t, i18n } = useTranslation();
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
@@ -97,8 +100,12 @@ export default function ChatPage() {
   return (
     <div className="flex flex-col h-screen bg-gray-50">
       <Card className="flex-1 m-4 flex flex-col">
-        <CardHeader className="border-b bg-white">
+        <CardHeader className="border-b bg-white flex flex-row items-center justify-between">
           <CardTitle className="text-lg font-semibold">Chat Assistant</CardTitle>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={() => i18n.changeLanguage('en')}>EN</Button>
+            <Button variant="outline" size="sm" onClick={() => i18n.changeLanguage('es')}>ES</Button>
+          </div>
         </CardHeader>
         
         <CardContent className="flex-1 p-0 flex flex-col">
@@ -126,7 +133,7 @@ export default function ChatPage() {
           <ChatInput
             onSendMessage={handleSendMessage}
             disabled={isLoading}
-            placeholder="Type your message or use voice input..."
+            placeholder={t('chat.placeholder')}
             ref={inputRef}
           />
         </div>
