@@ -1,7 +1,7 @@
 // Devcanva — chat UI step (week 1-2) — client UI only
 // Chat input component with send and microphone buttons
 
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
@@ -16,7 +16,10 @@ interface ChatInputProps {
   placeholder?: string;
 }
 
-export function ChatInput({ onSendMessage, onDebouncedInput, disabled = false, placeholder = "Type your message..." }: ChatInputProps) {
+export const ChatInput = React.forwardRef<HTMLTextAreaElement, ChatInputProps>(function ChatInput(
+  { onSendMessage, onDebouncedInput, disabled = false, placeholder = "Type your message..." }: ChatInputProps,
+  ref
+) {
   const [message, setMessage] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { 
@@ -122,7 +125,14 @@ export function ChatInput({ onSendMessage, onDebouncedInput, disabled = false, p
       <div className="flex items-end gap-2">
         <div className="flex-1 relative">
           <Textarea
-            ref={textareaRef}
+            ref={(el) => {
+              textareaRef.current = el;
+              if (typeof ref === 'function') {
+                ref(el);
+              } else if (ref) {
+                (ref as React.MutableRefObject<HTMLTextAreaElement | null>).current = el;
+              }
+            }}
             value={message}
             onChange={handleTextareaChange}
             onKeyDown={handleKeyDown}
@@ -187,7 +197,7 @@ export function ChatInput({ onSendMessage, onDebouncedInput, disabled = false, p
       </div>
     </div>
   );
-}
+});
 
 // Helper function for conditional classes
 function cn(...classes: (string | undefined | null | false)[]): string {

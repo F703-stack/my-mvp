@@ -22,6 +22,7 @@ export default function ChatPage() {
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   // Initialize with welcome message
   useEffect(() => {
@@ -78,6 +79,7 @@ export default function ChatPage() {
       setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
+      inputRef.current?.focus();
     }
   };
 
@@ -114,6 +116,7 @@ export default function ChatPage() {
             onSendMessage={handleSendMessage}
             disabled={isLoading}
             placeholder="Type your message or use voice input..."
+            ref={inputRef}
           />
         </div>
       </Card>
