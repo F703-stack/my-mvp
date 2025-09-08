@@ -24,6 +24,10 @@ export default function ChatPage() {
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
+  useEffect(() => {
+    inputRef.current?.focus();
+  }, []);
+
   // Initialize with welcome message
   useEffect(() => {
     const welcomeMessage: Message = {
