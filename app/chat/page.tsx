@@ -83,7 +83,14 @@ export default function ChatPage() {
       setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsLoading(false);
-      inputRef.current?.focus();
+      setTimeout(() => {
+        if (!inputRef.current) {
+          const el = document.querySelector('textarea[placeholder="Type your message or use voice input..."]') as HTMLTextAreaElement | null;
+          el?.focus();
+        } else {
+          inputRef.current.focus();
+        }
+      }, 30);
     }
   };
 
